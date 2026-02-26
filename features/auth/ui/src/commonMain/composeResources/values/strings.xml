@@ -1,0 +1,9 @@
+<resources>
+    <string name="incorrect_credential">Некорректные данные</string>
+    <string name="network_error">Нет соединения</string>
+
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+
+    <string name="sign_in">Войти</string>
+</resources>
