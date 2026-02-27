@@ -5,7 +5,7 @@ import com.arkivanov.decompose.ComponentContext
 
 abstract class EntryComponent(
     componentContext: ComponentContext
-) : ComponentContext by componentContext {
+) : ComponentContext by componentContext, DecomposeComponent() {
     @Composable
     abstract fun Render()
 }

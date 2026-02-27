@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.features.auth.entry)
+            implementation(projects.features.auth.api)
             implementation(projects.core.ui.compose)
             implementation(projects.uikit)
 

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import ru.stepan.reddit.auth.api.errors.IncorrectCredentialsError
 import ru.stepan.reddit.auth.api.models.Account
@@ -35,6 +36,12 @@ class AccountRepositoryImpl(
             datastore.edit {
                 it.remove(ACCOUNT_USERNAME_KEY)
             }
+        }
+    }
+
+    override suspend fun getMe(): Result<Account> {
+        return runCatching {
+            activeAccount.first()!!
         }
     }
 

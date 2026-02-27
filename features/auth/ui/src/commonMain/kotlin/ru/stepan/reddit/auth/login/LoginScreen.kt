@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,10 +22,19 @@ import testapp.features.auth.ui.generated.resources.login
 import testapp.features.auth.ui.generated.resources.network_error
 import testapp.features.auth.ui.generated.resources.password
 import testapp.features.auth.ui.generated.resources.sign_in
+import testapp.features.auth.ui.generated.resources.unknown_error
 
 @Composable
 internal fun LoginScreen(component: LoginComponent) {
     val state = component.state.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        component.events.collect {
+            when (it) {
+                is LoginScreenEvent.Authorized -> component.onAuthorized() // По факту вообще не нужно, сделал чисто чтоб как в дз было
+            }
+        }
+    }
 
     Scaffold {
         Column(
@@ -66,7 +76,8 @@ internal fun LoginScreen(component: LoginComponent) {
 private fun LoginScreenError.toText(): String {
     val res = when (this) {
         LoginScreenError.INCORRECT_CREDENTIALS -> Res.string.incorrect_credential
-        LoginScreenError.NETWORK_ERROR -> Res.string.network_error
+        LoginScreenError.NETWORK -> Res.string.network_error
+        LoginScreenError.UNKNOWN -> Res.string.unknown_error
     }
     return stringResource(res)
 }

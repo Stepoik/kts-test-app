@@ -35,6 +35,7 @@ include(":umbrella")
 
 include(":core:ui:decompose")
 include(":core:ui:compose")
+include(":core:api")
 
 include(":uikit")
 
@@ -48,9 +49,19 @@ include(":features:root:ui")
 
 include(":features:onboarding:entry")
 include(":features:onboarding:ui")
+include(":features:onboarding:api")
+include(":features:onboarding:data")
 
-include(":features:main:entry")
-include(":features:main:ui")
+include(":features:posts:entry")
+include(":features:posts:ui")
+include(":features:posts:api")
+include(":features:posts:data")
+
+include(":features:feed:entry")
+include(":features:feed:ui")
 
 include(":features:home:entry")
 include(":features:home:ui")
+
+include(":features:splash:entry")
+include(":features:splash:ui")

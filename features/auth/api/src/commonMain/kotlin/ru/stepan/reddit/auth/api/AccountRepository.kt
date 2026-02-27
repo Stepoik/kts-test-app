@@ -10,4 +10,6 @@ interface AccountRepository {
     suspend fun login(credentials: AuthCredentials): Result<Unit>
 
     suspend fun logout(): Result<Unit>
+
+    suspend fun getMe(): Result<Account>
 }

@@ -10,6 +10,11 @@ kotlin {
             implementation(projects.features.auth.data)
             implementation(projects.features.auth.ui)
 
+            implementation(projects.features.onboarding.data)
+            implementation(projects.features.onboarding.ui)
+
+            implementation(projects.features.splash.ui)
+
             implementation(projects.features.root.ui)
         }
     }
