@@ -36,6 +36,7 @@ include(":umbrella")
 include(":core:ui:decompose")
 include(":core:ui:compose")
 include(":core:api")
+include(":core:data")
 
 include(":uikit")
 

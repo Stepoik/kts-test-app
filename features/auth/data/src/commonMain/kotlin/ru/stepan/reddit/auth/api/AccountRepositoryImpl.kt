@@ -21,7 +21,7 @@ class AccountRepositoryImpl(
 
     override suspend fun login(credentials: AuthCredentials): Result<Unit> {
         return runCatching {
-            if (!credentials.isCorrect()) {
+            if (credentials.isCorrect()) {
                 datastore.edit {
                     it[ACCOUNT_USERNAME_KEY] = "stepa2004"
                 }

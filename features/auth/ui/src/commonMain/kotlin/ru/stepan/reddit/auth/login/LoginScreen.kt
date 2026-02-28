@@ -5,14 +5,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import ru.stepan.reddit.uikit.components.RedditOutlinedTextField
@@ -36,6 +46,8 @@ internal fun LoginScreen(component: LoginComponent) {
         }
     }
 
+    val focusRequester = remember { FocusRequester() }
+
     Scaffold {
         Column(
             Modifier.padding(it).fillMaxSize().padding(horizontal = 10.dp),
@@ -53,13 +65,23 @@ internal fun LoginScreen(component: LoginComponent) {
                 value = state.username,
                 onValueChange = component::onUsernameChanged,
                 placeholder = stringResource(Res.string.login),
+                keyboardActions = KeyboardActions(onNext = { focusRequester.requestFocus() }),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             RedditOutlinedTextField(
                 value = state.password,
                 onValueChange = component::onPasswordChanged,
                 placeholder = stringResource(Res.string.password),
-                modifier = Modifier.fillMaxWidth()
+                keyboardActions = KeyboardActions(onDone = { component.onButtonClicked() }),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
             )
             if (state.error != null) {
                 Text(
@@ -67,6 +89,13 @@ internal fun LoginScreen(component: LoginComponent) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.error
                 )
+            }
+            Button(
+                onClick = component::onButtonClicked,
+                enabled = state.isButtonEnabled,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(Res.string.sign_in))
             }
         }
     }

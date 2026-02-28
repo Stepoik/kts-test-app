@@ -47,7 +47,7 @@ class DefaultSplashEntryComponent(
                 Image(
                     painterResource(Res.drawable.reddit),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(0.5f)
                 )
             }
         }

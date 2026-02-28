@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.koin.core)
+            implementation(projects.core.data)
 
             implementation(projects.features.auth.data)
             implementation(projects.features.auth.ui)
@@ -13,7 +14,14 @@ kotlin {
             implementation(projects.features.onboarding.data)
             implementation(projects.features.onboarding.ui)
 
+            implementation(projects.features.posts.data)
+            implementation(projects.features.posts.ui)
+
             implementation(projects.features.splash.ui)
+
+            implementation(projects.features.feed.ui)
+
+            implementation(projects.features.home.ui)
 
             implementation(projects.features.root.ui)
         }

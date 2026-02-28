@@ -26,7 +26,7 @@ class DefaultOnboardingEntryComponent(
             componentContext: ComponentContext,
             onStartApp: () -> Unit
         ): OnboardingEntryComponent {
-            return getKoin().get { parametersOf(componentContext) }
+            return getKoin().get { parametersOf(componentContext, onStartApp) }
         }
     }
 }

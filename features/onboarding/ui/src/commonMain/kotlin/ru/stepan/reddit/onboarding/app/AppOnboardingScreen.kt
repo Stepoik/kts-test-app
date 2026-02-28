@@ -1,6 +1,7 @@
 package ru.stepan.reddit.onboarding.app
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -27,6 +30,7 @@ import testapp.features.onboarding.ui.generated.resources.first
 import testapp.features.onboarding.ui.generated.resources.next
 import testapp.features.onboarding.ui.generated.resources.second
 import testapp.features.onboarding.ui.generated.resources.start
+import testapp.features.onboarding.ui.generated.resources.third
 import testapp.features.onboarding.ui.generated.resources.what_can_you_do_text
 import testapp.features.onboarding.ui.generated.resources.what_can_you_do_title
 import testapp.features.onboarding.ui.generated.resources.what_is_reddit_text
@@ -39,7 +43,11 @@ fun AppOnboardingScreen(component: AppOnboardingComponent) {
     val pagerState = rememberPagerState { PAGES_COUNT }
     val coroutineScope = rememberCoroutineScope()
     Scaffold {
-        Column(Modifier.fillMaxSize().padding(it)) {
+        Column(
+            Modifier.fillMaxSize().padding(it)
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 20.dp)
+        ) {
             HorizontalPager(pagerState, userScrollEnabled = false) {
                 when (it) {
                     0 -> FirstPage(onNext = {
@@ -67,7 +75,14 @@ fun AppOnboardingScreen(component: AppOnboardingComponent) {
 @Composable
 private fun FirstPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+        Column(
+            Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                10.dp,
+                alignment = Alignment.CenterVertically
+            )
+        ) {
             Image(
                 painterResource(Res.drawable.first),
                 contentDescription = null,
@@ -80,7 +95,8 @@ private fun FirstPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
             Text(
                 stringResource(Res.string.what_is_reddit_text),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(0.6f)
+                color = MaterialTheme.colorScheme.onBackground.copy(0.6f),
+                textAlign = TextAlign.Center
             )
         }
         Button(onClick = onNext) {
@@ -92,7 +108,14 @@ private fun FirstPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
 @Composable
 private fun SecondPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+        Column(
+            Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                10.dp,
+                alignment = Alignment.CenterVertically
+            )
+        ) {
             Image(
                 painterResource(Res.drawable.second),
                 contentDescription = null,
@@ -105,7 +128,8 @@ private fun SecondPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
             Text(
                 stringResource(Res.string.what_can_you_do_text),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(0.6f)
+                color = MaterialTheme.colorScheme.onBackground.copy(0.6f),
+                textAlign = TextAlign.Center
             )
         }
         Button(onClick = onNext) {
@@ -117,9 +141,16 @@ private fun SecondPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
 @Composable
 private fun ThirdPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+        Column(
+            Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                10.dp,
+                alignment = Alignment.CenterVertically
+            )
+        ) {
             Image(
-                painterResource(Res.drawable.second),
+                painterResource(Res.drawable.third),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -130,7 +161,8 @@ private fun ThirdPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
             Text(
                 stringResource(Res.string.client_capabilities_text),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(0.6f)
+                color = MaterialTheme.colorScheme.onBackground.copy(0.6f),
+                textAlign = TextAlign.Center
             )
         }
         Button(onClick = onNext) {

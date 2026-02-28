@@ -5,9 +5,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.features.onboarding.api)
+            api(projects.features.posts.api)
 
-            implementation(libs.datastore.preferences.core)
             implementation(libs.koin.core)
         }
     }
