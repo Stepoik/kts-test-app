@@ -5,8 +5,12 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
@@ -14,7 +18,9 @@ fun RedditTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    MaterialTheme(colorScheme = provideColors(isDarkTheme), typography = RedditTypography, content = content)
+    MaterialTheme(colorScheme = provideColors(isDarkTheme), typography = RedditTypography) {
+        CompositionLocalProvider(LocalDimens provides MobileDimens, content = content)
+    }
 }
 
 @Composable
@@ -122,3 +128,29 @@ val RedditTypography = Typography(
         lineHeight = 14.sp
     )
 )
+
+data class Dimens(
+    val xs: Dp,
+    val sm: Dp,
+    val md: Dp,
+    val lg: Dp,
+    val xl: Dp,
+    val xxl: Dp,
+    val xxxl: Dp
+)
+
+val MobileDimens = Dimens(
+    xs = 4.dp,
+    sm = 8.dp,
+    md = 12.dp,
+    lg = 16.dp,
+    xl = 20.dp,
+    xxl = 24.dp,
+    xxxl = 32.dp
+)
+
+val MaterialTheme.dimens
+    @Composable
+    get() = LocalDimens.current
+
+internal val LocalDimens = staticCompositionLocalOf<Dimens> { error("No default impl") }

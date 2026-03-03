@@ -10,20 +10,20 @@ plugins {
 }
 
 kotlin {
-    sourceSets {
-        iosArm64()
-        iosSimulatorArm64()
+    iosArm64()
+    iosSimulatorArm64()
 
-        androidLibrary {
-            namespace = "com.example"
+    androidLibrary {
+        namespace = "com.example"
 
-            compileSdk = libs.versions.android.compileSdk.get().toInt()
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
 
-            compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_17)
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
         }
+    }
 
+    sourceSets {
         commonMain.dependencies {
             implementation(libs.compose.runtime)
 

@@ -20,12 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.stringResource
+import ru.stepan.reddit.core.ui.compose.SerializableTextFieldValue
+import ru.stepan.reddit.uikit.RedditTheme
 import ru.stepan.reddit.uikit.components.RedditOutlinedTextField
+import ru.stepan.reddit.uikit.dimens
 import testapp.features.auth.ui.generated.resources.Res
 import testapp.features.auth.ui.generated.resources.incorrect_credential
 import testapp.features.auth.ui.generated.resources.login
@@ -39,8 +45,8 @@ internal fun LoginScreen(component: LoginComponent) {
     val state = component.state.collectAsState().value
 
     LaunchedEffect(Unit) {
-        component.events.collect {
-            when (it) {
+        component.events.collect { event ->
+            when (event) {
                 is LoginScreenEvent.Authorized -> component.onAuthorized() // По факту вообще не нужно, сделал чисто чтоб как в дз было
             }
         }
@@ -48,17 +54,20 @@ internal fun LoginScreen(component: LoginComponent) {
 
     val focusRequester = remember { FocusRequester() }
 
-    Scaffold {
+    Scaffold { innerPadding ->
         Column(
-            Modifier.padding(it).fillMaxSize().padding(horizontal = 10.dp),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(horizontal = MaterialTheme.dimens.md),
             verticalArrangement = Arrangement.spacedBy(
-                10.dp,
+                MaterialTheme.dimens.md,
                 alignment = Alignment.CenterVertically
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                stringResource(Res.string.sign_in),
+                text = stringResource(Res.string.sign_in),
                 style = MaterialTheme.typography.titleMedium
             )
             RedditOutlinedTextField(
@@ -109,4 +118,20 @@ private fun LoginScreenError.toText(): String {
         LoginScreenError.UNKNOWN -> Res.string.unknown_error
     }
     return stringResource(res)
+}
+
+@Preview
+@Composable
+private fun LoginScreenPreview() {
+    val component = object : LoginComponent {
+        override val onAuthorized: () -> Unit = {}
+        override val events: SharedFlow<LoginScreenEvent> = MutableSharedFlow()
+        override val state: StateFlow<LoginScreenState> = MutableStateFlow(LoginScreenState())
+        override fun onButtonClicked() {}
+        override fun onPasswordChanged(password: SerializableTextFieldValue) {}
+        override fun onUsernameChanged(username: SerializableTextFieldValue) {}
+    }
+    RedditTheme {
+        LoginScreen(component)
+    }
 }

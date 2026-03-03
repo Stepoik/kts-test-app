@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import ru.stepan.reddit.uikit.RedditTheme
+import ru.stepan.reddit.uikit.dimens
 import ru.stepan.reddit.uikit.icons.Comment
 import ru.stepan.reddit.uikit.icons.DownArrow
 import ru.stepan.reddit.uikit.icons.Icons
@@ -34,8 +34,16 @@ fun PostItem(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        PostHeader(post.author, post.time, modifier = Modifier.fillMaxWidth())
-        PostBody(post.title, post.selftext, modifier = Modifier.fillMaxWidth())
+        PostHeader(
+            author = post.author,
+            time = post.time,
+            modifier = Modifier.fillMaxWidth()
+        )
+        PostBody(
+            title = post.title,
+            text = post.selftext,
+            modifier = Modifier.fillMaxWidth()
+        )
         PostActions(
             score = post.score,
             liked = post.liked,
@@ -54,13 +62,13 @@ private fun PostHeader(author: String, time: String, modifier: Modifier = Modifi
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.sm)) {
             Text(author)
             Text("•")
             Text(time)
         }
         IconButton(onClick = {}) {
-            Icon(Icons.Menu, contentDescription = null, modifier = Modifier.size(16.dp))
+            Icon(Icons.Menu, contentDescription = null, modifier = Modifier.size(MaterialTheme.dimens.md))
         }
     }
 }
@@ -83,15 +91,15 @@ private fun PostActions(
     onLike: (like: Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val iconModifier = Modifier.size(16.dp)
+    val iconModifier = Modifier.size(MaterialTheme.dimens.md)
     Row(
         modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.md),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Card(Modifier) {
             Row(
-                modifier = Modifier.padding(horizontal = 12.dp),
+                modifier = Modifier.padding(horizontal = MaterialTheme.dimens.md),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 val likedTint = if (liked == true) {
@@ -104,7 +112,7 @@ private fun PostActions(
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 }
-                IconButton(onClick = { onLike(true) }, modifier = Modifier.size(24.dp)) {
+                IconButton(onClick = { onLike(true) }, modifier = Modifier.size(MaterialTheme.dimens.lg)) {
                     Icon(
                         Icons.UpArrow,
                         contentDescription = null,
@@ -113,7 +121,7 @@ private fun PostActions(
                     )
                 }
                 Text(score.toString())
-                IconButton(onClick = { onLike(false) }, modifier = Modifier.size(24.dp)) {
+                IconButton(onClick = { onLike(false) }, modifier = Modifier.size(MaterialTheme.dimens.xxl)) {
                     Icon(
                         Icons.DownArrow,
                         contentDescription = null,
@@ -127,7 +135,7 @@ private fun PostActions(
         Card(onClick = onComment) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = MaterialTheme.dimens.lg)
             ) {
                 Icon(
                     Icons.Comment,
@@ -139,7 +147,7 @@ private fun PostActions(
         }
 
         Card(onClick = onShare) {
-            Box(Modifier.padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
+            Box(Modifier.padding(horizontal = MaterialTheme.dimens.lg), contentAlignment = Alignment.Center) {
                 Icon(
                     Icons.Share,
                     contentDescription = null,

@@ -19,10 +19,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import ru.stepan.reddit.uikit.RedditTheme
+import ru.stepan.reddit.uikit.dimens
 import testapp.features.onboarding.ui.generated.resources.Res
 import testapp.features.onboarding.ui.generated.resources.client_capabilities_text
 import testapp.features.onboarding.ui.generated.resources.client_capabilities_title
@@ -42,25 +48,32 @@ private const val PAGES_COUNT = 3
 fun AppOnboardingScreen(component: AppOnboardingComponent) {
     val pagerState = rememberPagerState { PAGES_COUNT }
     val coroutineScope = rememberCoroutineScope()
-    Scaffold {
+    Scaffold { innerPadding ->
         Column(
-            Modifier.fillMaxSize().padding(it)
-                .padding(horizontal = 10.dp)
-                .padding(bottom = 20.dp)
+            Modifier.fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = MaterialTheme.dimens.md)
+                .padding(bottom = MaterialTheme.dimens.xl)
         ) {
-            HorizontalPager(pagerState, userScrollEnabled = false) {
-                when (it) {
-                    0 -> FirstPage(onNext = {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(1)
-                        }
-                    }, modifier = Modifier.fillMaxSize())
+            HorizontalPager(pagerState, userScrollEnabled = false) { page ->
+                when (page) {
+                    0 -> FirstPage(
+                        onNext = {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(1)
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
 
-                    1 -> SecondPage(onNext = {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(2)
-                        }
-                    }, modifier = Modifier.fillMaxSize())
+                    1 -> SecondPage(
+                        onNext = {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(2)
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
 
                     2 -> ThirdPage(
                         onNext = component::onStartButtonClicked,
@@ -76,10 +89,11 @@ fun AppOnboardingScreen(component: AppOnboardingComponent) {
 private fun FirstPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Column(
-            Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            Modifier.weight(1f)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                10.dp,
+                MaterialTheme.dimens.sm,
                 alignment = Alignment.CenterVertically
             )
         ) {
@@ -109,10 +123,11 @@ private fun FirstPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
 private fun SecondPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Column(
-            Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            Modifier.weight(1f)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                10.dp,
+                space = MaterialTheme.dimens.sm,
                 alignment = Alignment.CenterVertically
             )
         ) {
@@ -142,10 +157,11 @@ private fun SecondPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
 private fun ThirdPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Column(
-            Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            Modifier.weight(1f)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                10.dp,
+                space = MaterialTheme.dimens.sm,
                 alignment = Alignment.CenterVertically
             )
         ) {
@@ -168,5 +184,18 @@ private fun ThirdPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
         Button(onClick = onNext) {
             Text(stringResource(Res.string.start))
         }
+    }
+}
+
+@Preview
+@Composable
+private fun AppOnboardingScreenPreview() {
+    val component = object : AppOnboardingComponent {
+        override val state: StateFlow<Unit> = MutableStateFlow(Unit)
+        override val events: SharedFlow<Unit> = MutableSharedFlow()
+        override fun onStartButtonClicked() {}
+    }
+    RedditTheme {
+        AppOnboardingScreen(component)
     }
 }

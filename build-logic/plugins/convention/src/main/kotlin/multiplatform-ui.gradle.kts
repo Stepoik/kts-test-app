@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.androidLibrary
+import gradle.kotlin.dsl.accessors._2e4f3438bf96067bd815f32776db6f27.androidRuntimeClasspath
 import gradle.kotlin.dsl.accessors._2e4f3438bf96067bd815f32776db6f27.sourceSets
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -11,19 +12,23 @@ plugins {
 }
 
 kotlin {
+    iosArm64()
+    iosSimulatorArm64()
+
+    androidLibrary {
+        namespace = "com.example"
+
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
+
     sourceSets {
-        iosArm64()
-        iosSimulatorArm64()
-
-        androidLibrary {
-            namespace = "com.example"
-
-            experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
-            compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-            compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_17)
-            }
+        androidMain.dependencies {
+            implementation(libs.compose.uiTooling)
         }
 
         commonMain.dependencies {
