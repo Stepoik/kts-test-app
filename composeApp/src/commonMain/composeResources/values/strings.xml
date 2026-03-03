@@ -1,0 +1,7 @@
+<resources>
+    <string name="welcome">Добро пожаловать</string>
+    <string name="log_in">Войти</string>
+
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+</resources>
