@@ -1,6 +1,3 @@
-import com.android.build.api.dsl.androidLibrary
-import gradle.kotlin.dsl.accessors._05cc99bc9a86cc2a07e4119f16b2547d.kotlin
-import gradle.kotlin.dsl.accessors._05cc99bc9a86cc2a07e4119f16b2547d.sourceSets
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
