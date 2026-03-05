@@ -6,14 +6,12 @@ import ru.stepan.reddit.core.ui.compose.text
 
 @Serializable
 internal data class LoginScreenState(
-    val isLoading: Boolean = false,
-    val error: LoginScreenError? = null
+    val status: LoginStatus = LoginStatus.WAITING_FOR_LOGIN
 )
 
-internal val LoginScreenState.isButtonEnabled get() = !isLoading
-
-internal enum class LoginScreenError {
-    INCORRECT_CREDENTIALS,
-    NETWORK,
-    UNKNOWN
+enum class LoginStatus {
+    WAITING_FOR_LOGIN,
+    LOGGING
 }
+
+internal val LoginScreenState.isButtonEnabled get() = status == LoginStatus.WAITING_FOR_LOGIN

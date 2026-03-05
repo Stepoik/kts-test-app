@@ -1,30 +1,57 @@
 package ru.stepan.reddit.auth.login
 
 import com.arkivanov.decompose.ComponentContext
+import dev.lokksmith.client.request.flow.AuthFlow
+import dev.lokksmith.client.request.flow.AuthFlowResultProvider
+import dev.lokksmith.client.request.flow.authFlowResult
+import dev.lokksmith.client.request.flow.authorizationCode.AuthorizationCodeFlow
+import dev.lokksmith.client.request.parameter.Scope
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
-import ru.stepan.reddit.auth.api.AccountRepository
-import ru.stepan.reddit.auth.api.errors.IncorrectCredentialsError
-import ru.stepan.reddit.core.api.NetworkError
+import ru.stepan.reddit.core.data.network.StepikOAuthClientFactory
 import ru.stepan.reddit.core.ui.decompose.BaseScreenComponent
 
 internal class DefaultLoginComponent(
     componentContext: ComponentContext,
     override val onAuthorized: () -> Unit,
-    private val accountRepository: AccountRepository
+    private val stepikOAuthClientFactory: StepikOAuthClientFactory
 ) : BaseScreenComponent<LoginScreenState, LoginScreenEvent>(
     componentContext = componentContext,
     initialState = LoginScreenState(),
     serializer = LoginScreenState.serializer()
 ), LoginComponent {
-    override fun onButtonClicked() {
-        if (state.value.isLoading) return
-
+    init {
         componentScope.launch {
-            val initiation = accountRepository.getAuthInitiation()
+            stepikOAuthClientFactory.getOrCreate().authFlowResult.collect(::onResult)
+        }
+    }
+
+    override fun onButtonClicked() {
+        if (state.value.status != LoginStatus.WAITING_FOR_LOGIN) return
+
+        updateState { it.copy(status = LoginStatus.LOGGING) }
+        componentScope.launch {
+            val initiation = getAuthInitiation()
             sendEvent(LoginScreenEvent.AuthFlowInitiation(initiation))
         }
+    }
+
+    private fun onResult(result: AuthFlowResultProvider.Result) {
+        if (result is AuthFlowResultProvider.Result.Success) {
+            onAuthorized()
+            updateState { it.copy(status = LoginStatus.WAITING_FOR_LOGIN) }
+        }
+    }
+
+    private suspend fun getAuthInitiation(): AuthFlow.Initiation {
+        val request = AuthorizationCodeFlow.Request(
+            redirectUri = StepikOAuthClientFactory.REDIRECT_URL,
+            scope = setOf(Scope.Write, Scope.Read)
+        )
+        return stepikOAuthClientFactory.getOrCreate()
+            .authorizationCodeFlow(request = request)
+            .prepare()
     }
 
 
@@ -35,13 +62,5 @@ internal class DefaultLoginComponent(
         ): LoginComponent {
             return getKoin().get { parametersOf(componentContext, onAuthorized) }
         }
-    }
-}
-
-private fun Throwable.toScreenError(): LoginScreenError {
-    return when (this) {
-        is IncorrectCredentialsError -> LoginScreenError.INCORRECT_CREDENTIALS
-        is NetworkError -> LoginScreenError.NETWORK
-        else -> LoginScreenError.UNKNOWN
     }
 }

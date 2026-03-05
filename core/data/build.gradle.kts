@@ -10,7 +10,7 @@ kotlin {
 
         commonMain.dependencies {
             api(libs.ktor.client.core)
-            api(libs.lokksmith.core)
+            api(projects.libs.lokksmithCore)
 
             implementation(libs.datastore.preferences.core)
             implementation(libs.ktor.client.auth)

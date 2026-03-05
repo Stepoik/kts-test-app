@@ -22,6 +22,7 @@ internal expect class HttpEngineFactory() {
 internal object KtorConfiguration {
     const val CONNECTION_TIMEOUT = 15000L
     const val REQUEST_TIMEOUT = 30000L
+    const val DEFAULT_URL = "https://stepik.org/api/"
 }
 
 internal val KtorJson = Json {
@@ -30,6 +31,9 @@ internal val KtorJson = Json {
 }
 
 fun <T : HttpClientEngineConfig> HttpClientConfig<T>.commonConfig() {
+    defaultRequest {
+        url(KtorConfiguration.DEFAULT_URL)
+    }
     install(ContentNegotiation) {
         json(KtorJson)
     }

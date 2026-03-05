@@ -1,5 +1,6 @@
 plugins {
     id("multiplatform")
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {

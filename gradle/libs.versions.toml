@@ -21,7 +21,9 @@ decompose = "3.4.0"
 koin = "4.1.1"
 coroutines = "1.10.2"
 datastore = "1.2.0"
-lokksmith = "0.11.1"
+poko = "0.21.2"
+kotlin-serialization = "1.10.0"
+cryptography = "0.5.0"
 
 [libraries]
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
@@ -62,9 +64,6 @@ compose-compiler-gradle = { module = "org.jetbrains.kotlin.plugin.compose:org.je
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
-lokksmith-compose = { module = "dev.lokksmith:lokksmith-compose", version.ref = "lokksmith" }
-lokksmith-core = { module = "dev.lokksmith:lokksmith-core", version.ref = "lokksmith" }
-
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClient" }
 ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClient" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorClient" }
@@ -72,8 +71,18 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktorCli
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClient" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktorClient" }
 
+# Библиотеки для looksmith
+androidx-browser = "androidx.browser:browser:1.9.0"
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
+cryptography-core = { module = "dev.whyoleg.cryptography:cryptography-core", version.ref = "cryptography" }
+cryptography-provider-optimal = { module = "dev.whyoleg.cryptography:cryptography-provider-optimal", version.ref = "cryptography" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+poko = { id = "dev.drewhamilton.poko", version.ref = "poko" }

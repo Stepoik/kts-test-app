@@ -42,8 +42,6 @@ include(":uikit")
 
 include(":features:auth:ui")
 include(":features:auth:entry")
-include(":features:auth:api")
-include(":features:auth:data")
 
 include(":features:root:entry")
 include(":features:root:ui")
@@ -53,16 +51,24 @@ include(":features:onboarding:ui")
 include(":features:onboarding:api")
 include(":features:onboarding:data")
 
-include(":features:posts:entry")
-include(":features:posts:ui")
-include(":features:posts:api")
-include(":features:posts:data")
+include(":features:cources:ui")
+include(":features:cources:api")
+include(":features:cources:data")
 
-include(":features:feed:entry")
-include(":features:feed:ui")
+include(":features:recommendations:entry")
+include(":features:recommendations:ui")
+
+include(":features:search:entry")
+include(":features:search:ui")
+
+include(":features:course-details:entry")
+include(":features:course-details:ui")
 
 include(":features:home:entry")
 include(":features:home:ui")
 
 include(":features:splash:entry")
 include(":features:splash:ui")
+
+include(":libs:lokksmith-compose")
+include(":libs:lokksmith-core")

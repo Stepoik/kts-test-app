@@ -23,6 +23,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import dev.lokksmith.client.request.flow.AuthFlowUserAgentResponseHandler
+import dev.lokksmith.compose.AuthFlowLauncher
 import dev.lokksmith.compose.rememberAuthFlowLauncher
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,12 +47,13 @@ import testapp.features.auth.ui.generated.resources.unknown_error
 internal fun LoginScreen(component: LoginComponent) {
     val state = component.state.collectAsState().value
     val authLauncher = rememberAuthFlowLauncher()
-
     LaunchedEffect(Unit) {
         component.events.collect { event ->
             when (event) {
                 is LoginScreenEvent.AuthFlowInitiation -> {
-                    authLauncher.launch(event.initiation)
+                    authLauncher.launch(
+                        initiation = event.initiation
+                    )
                 }
             }
         }
@@ -68,17 +71,6 @@ internal fun LoginScreen(component: LoginComponent) {
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(Res.string.sign_in),
-                style = MaterialTheme.typography.titleMedium
-            )
-            if (state.error != null) {
-                Text(
-                    state.error.toText(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
             Button(
                 onClick = component::onButtonClicked,
                 enabled = state.isButtonEnabled,
@@ -88,16 +80,6 @@ internal fun LoginScreen(component: LoginComponent) {
             }
         }
     }
-}
-
-@Composable
-private fun LoginScreenError.toText(): String {
-    val res = when (this) {
-        LoginScreenError.INCORRECT_CREDENTIALS -> Res.string.incorrect_credential
-        LoginScreenError.NETWORK -> Res.string.network_error
-        LoginScreenError.UNKNOWN -> Res.string.unknown_error
-    }
-    return stringResource(res)
 }
 
 @Preview

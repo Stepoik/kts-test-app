@@ -21,10 +21,10 @@ class StepikOAuthClientFactory {
     }
 
     companion object {
-        private const val STEPIK_CLIENT_ID = "stepik"
+        private const val STEPIK_CLIENT_ID = "AB3JTcapjiIHD3CRaLeeWINCoib4iBkArkZt2M86"
         private const val STEPIK_AUTHORIZATION_ENDPOINT = "https://stepik.org/oauth2/authorize"
-        private const val STEPIK_TOKEN_ENDPOINT = "https://stepik.org/oauth2/authorize"
+        private const val STEPIK_TOKEN_ENDPOINT = "http://95.31.139.53:41032/token"
 
-        const val REDIRECT_URL = "https://stepapp.ru/oauth/callback"
+        const val REDIRECT_URL = "http://95.31.139.53:41032/oauth/callback"
     }
 }
