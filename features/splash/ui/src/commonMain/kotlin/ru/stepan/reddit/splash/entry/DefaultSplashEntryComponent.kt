@@ -27,7 +27,7 @@ class DefaultSplashEntryComponent(
 
     init {
         componentScope.launch {
-            accountRepository.getMe()
+            accountRepository.updateAccount()
                 .onSuccess {
                     onNavigateHome()
                 }.onFailure {

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import dev.lokksmith.compose.rememberAuthFlowLauncher
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,16 +44,17 @@ import testapp.features.auth.ui.generated.resources.unknown_error
 @Composable
 internal fun LoginScreen(component: LoginComponent) {
     val state = component.state.collectAsState().value
+    val authLauncher = rememberAuthFlowLauncher()
 
     LaunchedEffect(Unit) {
         component.events.collect { event ->
             when (event) {
-                is LoginScreenEvent.Authorized -> component.onAuthorized() // По факту вообще не нужно, сделал чисто чтоб как в дз было
+                is LoginScreenEvent.AuthFlowInitiation -> {
+                    authLauncher.launch(event.initiation)
+                }
             }
         }
     }
-
-    val focusRequester = remember { FocusRequester() }
 
     Scaffold { innerPadding ->
         Column(
@@ -69,28 +71,6 @@ internal fun LoginScreen(component: LoginComponent) {
             Text(
                 text = stringResource(Res.string.sign_in),
                 style = MaterialTheme.typography.titleMedium
-            )
-            RedditOutlinedTextField(
-                value = state.username,
-                onValueChange = component::onUsernameChanged,
-                placeholder = stringResource(Res.string.login),
-                keyboardActions = KeyboardActions(onNext = { focusRequester.requestFocus() }),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-            RedditOutlinedTextField(
-                value = state.password,
-                onValueChange = component::onPasswordChanged,
-                placeholder = stringResource(Res.string.password),
-                keyboardActions = KeyboardActions(onDone = { component.onButtonClicked() }),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
             )
             if (state.error != null) {
                 Text(
@@ -128,8 +108,6 @@ private fun LoginScreenPreview() {
         override val events: SharedFlow<LoginScreenEvent> = MutableSharedFlow()
         override val state: StateFlow<LoginScreenState> = MutableStateFlow(LoginScreenState())
         override fun onButtonClicked() {}
-        override fun onPasswordChanged(password: SerializableTextFieldValue) {}
-        override fun onUsernameChanged(username: SerializableTextFieldValue) {}
     }
     RedditTheme {
         LoginScreen(component)
