@@ -13,7 +13,7 @@ kotlin {
     iosSimulatorArm64()
 
     androidLibrary {
-        namespace = "com.example"
+        namespace = autoNamespace()
 
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         compileSdk = libs.versions.android.compileSdk.get().toInt()

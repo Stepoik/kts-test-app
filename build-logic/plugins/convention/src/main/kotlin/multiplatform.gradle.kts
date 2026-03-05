@@ -10,7 +10,7 @@ kotlin {
     iosSimulatorArm64()
 
     androidLibrary {
-        namespace = "com.example"
+        namespace = autoNamespace()
 
         compileSdk = libs.versions.android.compileSdk.get().toInt()
 
