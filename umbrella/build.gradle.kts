@@ -13,6 +13,11 @@ kotlin {
             implementation(projects.features.onboarding.data)
             implementation(projects.features.onboarding.ui)
 
+            implementation(projects.features.courses.ui)
+            implementation(projects.features.courses.data)
+
+            implementation(projects.features.recommendations.ui)
+
             implementation(projects.features.splash.ui)
 
             implementation(projects.features.home.ui)

@@ -14,6 +14,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import ru.stepan.reddit.core.api.NetworkError
 
 internal expect class HttpEngineFactory() {
     fun createEngine(): HttpClientEngineFactory<HttpClientEngineConfig>
@@ -41,10 +42,10 @@ fun <T : HttpClientEngineConfig> HttpClientConfig<T>.commonConfig() {
         validateResponse { response ->
             val statusCode = response.status
             if (statusCode.value in 400..499) {
-                throw ClientRequestException(response, "Client error ${statusCode.value}")
+                throw NetworkError("Client error ${statusCode.value}")
             }
             if (statusCode.value >= 500) {
-                throw ServerResponseException(response, "Server error ${statusCode.value}")
+                throw NetworkError("Server error ${statusCode.value}")
             }
         }
 

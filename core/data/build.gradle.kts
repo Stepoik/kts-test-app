@@ -11,6 +11,8 @@ kotlin {
         commonMain.dependencies {
             api(libs.ktor.client.core)
             api(projects.libs.lokksmithCore)
+            api(projects.core.common)
+            api(projects.core.api)
 
             implementation(libs.datastore.preferences.core)
             implementation(libs.ktor.client.auth)

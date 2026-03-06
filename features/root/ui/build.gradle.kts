@@ -13,6 +13,8 @@ kotlin {
 
             implementation(projects.features.onboarding.api)
 
+            implementation(projects.core.data)
+
             implementation(libs.koin.core)
         }
     }

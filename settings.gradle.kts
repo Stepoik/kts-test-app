@@ -37,6 +37,7 @@ include(":core:ui:decompose")
 include(":core:ui:compose")
 include(":core:api")
 include(":core:data")
+include(":core:common")
 
 include(":uikit")
 
@@ -51,9 +52,10 @@ include(":features:onboarding:ui")
 include(":features:onboarding:api")
 include(":features:onboarding:data")
 
-include(":features:cources:ui")
-include(":features:cources:api")
-include(":features:cources:data")
+include(":features:courses:ui")
+include(":features:courses:api")
+include(":features:courses:data")
+include(":features:courses:domain")
 
 include(":features:recommendations:entry")
 include(":features:recommendations:ui")
@@ -69,6 +71,11 @@ include(":features:home:ui")
 
 include(":features:splash:entry")
 include(":features:splash:ui")
+
+include(":features:profile:entry")
+include(":features:profile:ui")
+include(":features:profile:api")
+include(":features:profile:data")
 
 include(":libs:lokksmith-compose")
 include(":libs:lokksmith-core")

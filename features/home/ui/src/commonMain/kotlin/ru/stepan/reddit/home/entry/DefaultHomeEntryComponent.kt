@@ -1,21 +1,92 @@
 package ru.stepan.reddit.home.entry
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.childContext
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pushToFront
+import com.arkivanov.decompose.value.Value
+import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
-import ru.stepan.reddit.main.entry.FeedEntryComponent
+import ru.stepan.reddit.recommendations.entry.RecommendationsEntryComponent
+import ru.stepan.reddit.uikit.icons.DownArrow
+import ru.stepan.reddit.uikit.icons.Icons
+import ru.stepan.reddit.uikit.icons.UpArrow
 
 class DefaultHomeEntryComponent(
     componentContext: ComponentContext,
-    private val feedComponentFactory: FeedEntryComponent.Factory
+    private val recommendationsComponentFactory: RecommendationsEntryComponent.Factory
 ) : HomeEntryComponent(componentContext) {
-    private val feedComponent = feedComponentFactory.create(componentContext.childContext("feed"))
+    private val navigation = StackNavigation<Config>()
+    private val stack = childStack(
+        source = navigation,
+        initialConfiguration = Config.Recommendations,
+        handleBackButton = true,
+        serializer = Config.serializer(),
+        childFactory = ::createChild
+    )
+
+    private fun createChild(config: Config, componentContext: ComponentContext): Child {
+        return when (config) {
+            is Config.Recommendations -> Child.Recommendations(
+                recommendationsComponentFactory.create(
+                    componentContext
+                )
+            )
+
+            is Config.Search -> Child.Search(recommendationsComponentFactory.create(componentContext))
+        }
+    }
 
     @Composable
     override fun Render() {
-        feedComponent.Render()
+        Scaffold(
+            bottomBar = {
+                BottomNavigation(
+                    onNavigateSearch = { navigation.pushToFront(Config.Search) },
+                    onNavigateRecommendations = { navigation.pushToFront(Config.Recommendations) },
+                    stack = stack
+                )
+            }
+        ) { paddingValues ->
+            Children(
+                stack,
+                modifier = Modifier.paddingBottomWithConsume(paddingValues)
+            ) {
+                when (val instance = it.instance) {
+                    is Child.Recommendations -> instance.component.Render()
+                    is Child.Search -> instance.component.Render()
+                }
+            }
+        }
+    }
+
+    @Serializable
+    private sealed class Config {
+        @Serializable
+        object Recommendations : Config()
+
+        @Serializable
+        object Search : Config()
+    }
+
+    sealed class Child {
+        class Recommendations(val component: RecommendationsEntryComponent) : Child()
+        class Search(val component: RecommendationsEntryComponent) : Child()
     }
 
     class Factory : HomeEntryComponent.Factory, KoinComponent {
@@ -24,3 +95,47 @@ class DefaultHomeEntryComponent(
         }
     }
 }
+
+fun Modifier.paddingBottomWithConsume(paddingValues: PaddingValues): Modifier {
+    val bottomPadding = paddingValues.calculateBottomPadding()
+    return this then Modifier.padding(bottom = bottomPadding)
+        .consumeWindowInsets(PaddingValues(bottom = bottomPadding))
+}
+
+@Composable
+private fun BottomNavigation(
+    onNavigateRecommendations: () -> Unit,
+    onNavigateSearch: () -> Unit,
+    stack: Value<ChildStack<*, DefaultHomeEntryComponent.Child>>
+) {
+    val activeChild = stack.subscribeAsState().value.active.instance
+    val items = remember(activeChild) {
+        listOf(
+            NavigationItem(
+                Icons.UpArrow,
+                onNavigateRecommendations,
+                activeChild is DefaultHomeEntryComponent.Child.Recommendations
+            ),
+            NavigationItem(
+                Icons.DownArrow,
+                onNavigateSearch,
+                activeChild is DefaultHomeEntryComponent.Child.Search
+            )
+        )
+    }
+    NavigationBar {
+        items.forEach {
+            NavigationBarItem(
+                selected = it.isActive,
+                icon = { Icon(it.icon, contentDescription = null) },
+                onClick = it.onClick
+            )
+        }
+    }
+}
+
+data class NavigationItem(
+    val icon: ImageVector,
+    val onClick: () -> Unit,
+    val isActive: Boolean
+)

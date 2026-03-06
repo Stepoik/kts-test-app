@@ -64,9 +64,9 @@ internal fun LoginScreen(component: LoginComponent) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = MaterialTheme.dimens.md),
+                .padding(horizontal = MaterialTheme.dimens.paddings.md),
             verticalArrangement = Arrangement.spacedBy(
-                MaterialTheme.dimens.md,
+                MaterialTheme.dimens.paddings.md,
                 alignment = Alignment.CenterVertically
             ),
             horizontalAlignment = Alignment.CenterHorizontally

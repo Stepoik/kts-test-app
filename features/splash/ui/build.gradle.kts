@@ -9,6 +9,8 @@ kotlin {
             implementation(projects.core.ui.compose)
             implementation(projects.uikit)
 
+            implementation(projects.core.data)
+
             implementation(libs.koin.core)
         }
     }

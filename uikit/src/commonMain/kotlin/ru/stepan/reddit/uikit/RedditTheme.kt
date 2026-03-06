@@ -130,23 +130,41 @@ val RedditTypography = Typography(
 )
 
 data class Dimens(
-    val xs: Dp,
-    val sm: Dp,
-    val md: Dp,
-    val lg: Dp,
-    val xl: Dp,
-    val xxl: Dp,
-    val xxxl: Dp
-)
+    val paddings: Paddings,
+    val sizes: Sizes
+) {
+    data class Paddings(
+        val xs: Dp,
+        val sm: Dp,
+        val md: Dp,
+        val lg: Dp,
+        val xl: Dp,
+        val xxl: Dp,
+        val xxxl: Dp
+    )
+
+    data class Sizes(
+        val image: Dp,
+        val iconSmall: Dp,
+        val iconMedium: Dp,
+    )
+}
 
 val MobileDimens = Dimens(
-    xs = 4.dp,
-    sm = 8.dp,
-    md = 12.dp,
-    lg = 16.dp,
-    xl = 20.dp,
-    xxl = 24.dp,
-    xxxl = 32.dp
+    paddings = Dimens.Paddings(
+        xs = 4.dp,
+        sm = 8.dp,
+        md = 12.dp,
+        lg = 16.dp,
+        xl = 20.dp,
+        xxl = 24.dp,
+        xxxl = 32.dp
+    ),
+    sizes = Dimens.Sizes(
+        image = 40.dp,
+        iconSmall = 12.dp,
+        iconMedium = 16.dp
+    )
 )
 
 val MaterialTheme.dimens

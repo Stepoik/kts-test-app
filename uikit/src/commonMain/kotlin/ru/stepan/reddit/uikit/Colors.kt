@@ -21,6 +21,8 @@ val RedditGray600 = Color(0xFF818384)
 val RedditGray800 = Color(0xFF1A1A1B)
 val RedditGray900 = Color(0xFF121212)
 
+val Yellow = Color(0xFFF3AB34)
+
 val RedditLightColorScheme = lightColorScheme(
     primary = RedditOrange,
     onPrimary = Color.White,
@@ -31,6 +33,8 @@ val RedditLightColorScheme = lightColorScheme(
     onSecondary = Color.White,
     secondaryContainer = RedditBlueLight,
     onSecondaryContainer = Color.Black,
+
+    tertiary = Yellow,
 
     background = RedditWhite,
     onBackground = RedditBlack,
@@ -57,6 +61,8 @@ val RedditDarkColorScheme = darkColorScheme(
     onSecondary = Color.Black,
     secondaryContainer = RedditBlueDark,
     onSecondaryContainer = Color.White,
+
+    tertiary = Yellow,
 
     background = RedditGray900,
     onBackground = Color.White,
