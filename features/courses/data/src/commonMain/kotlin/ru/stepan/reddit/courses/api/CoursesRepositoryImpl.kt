@@ -38,14 +38,16 @@ class CoursesRepositoryImpl(
             val body = httpClient.get("search-results") {
                 parameter(
                     "order",
-                    "conversion_rate__none%2Crating__none%2Cquality__none%2Cpaid_weight__none%2Csearch_boost__none"
+                    "conversion_rate__none,rating__none,quality__none,paid_weight__none,search_boost__none"
                 )
+                parameter("is_popular", true)
+                parameter("is_public", true)
                 parameter("query", query)
                 parameter("page", page)
                 parameter("type", "course")
             }.body<SearchResultsResponse>()
 
-            val courses = getCoursesByIds(body.searchResults.map { it.id })
+            val courses = getCoursesByIds(body.searchResults.map { it.course })
             CoursePage(
                 nextPage = body.meta.nextPage,
                 courses = courses

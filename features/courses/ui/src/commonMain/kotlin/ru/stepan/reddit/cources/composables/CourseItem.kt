@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,19 +20,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.stringResource
 import ru.stepan.reddit.uikit.RedditTheme
+import ru.stepan.reddit.uikit.components.HorizontalSpacer
 import ru.stepan.reddit.uikit.components.VerticalSpacer
 import ru.stepan.reddit.uikit.dimens
+import ru.stepan.reddit.uikit.icons.Certificate
+import ru.stepan.reddit.uikit.icons.Clock
+import ru.stepan.reddit.uikit.icons.FavoriteFilled
+import ru.stepan.reddit.uikit.icons.FavoriteOutlined
 import ru.stepan.reddit.uikit.icons.Icons
-import ru.stepan.reddit.uikit.icons.Share
-import ru.stepan.reddit.uikit.icons.UpArrow
+import ru.stepan.reddit.uikit.icons.Person
 import testapp.features.courses.ui.generated.resources.Res
 import testapp.features.courses.ui.generated.resources.certificate
+import testapp.features.courses.ui.generated.resources.value_hours
 
 @Composable
 fun CourseItem(course: CourseVO, onLike: () -> Unit, modifier: Modifier = Modifier) {
@@ -43,21 +49,27 @@ fun CourseItem(course: CourseVO, onLike: () -> Unit, modifier: Modifier = Modifi
                 .size(MaterialTheme.dimens.sizes.image)
                 .clip(MaterialTheme.shapes.extraSmall)
         )
+        HorizontalSpacer(MaterialTheme.dimens.paddings.md)
         Column(Modifier.weight(1f)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                CourseInfo(course)
+                CourseInfo(course, modifier = Modifier.weight(1f))
                 LikeButton(course.isLiked, onClick = onLike)
             }
+            VerticalSpacer(MaterialTheme.dimens.paddings.xs)
             HorizontalDivider(Modifier.fillMaxWidth())
         }
     }
 }
 
 @Composable
-private fun CourseInfo(course: CourseVO) {
-    Column {
-        Text(course.title)
-        Text(course.authors)
+private fun CourseInfo(course: CourseVO, modifier: Modifier = Modifier) {
+    Column(modifier) {
+        Text(
+            course.title,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(course.authors, style = MaterialTheme.typography.bodySmall)
         VerticalSpacer(MaterialTheme.dimens.paddings.md)
         Prices(course)
         Review(course.review)
@@ -69,7 +81,7 @@ private fun Review(review: CourseReview) {
     val iconsModifier = Modifier.size(MaterialTheme.dimens.sizes.iconSmall)
     val contentColors = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
     val fontStyle = MaterialTheme.typography.bodySmall
-    Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.paddings.md)) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.paddings.md)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Stars(review.starsCount)
             Text(review.average, color = contentColors, style = fontStyle)
@@ -77,34 +89,43 @@ private fun Review(review: CourseReview) {
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                Icons.Share,
+                Icons.Person,
                 contentDescription = review.learnersCount,
                 modifier = iconsModifier,
                 tint = contentColors
             )
+            HorizontalSpacer(MaterialTheme.dimens.paddings.xs)
             Text(review.learnersCount, color = contentColors, style = fontStyle)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                Icons.Share,
-                contentDescription = review.timeToComplete,
+                Icons.Clock,
+                contentDescription = stringResource(Res.string.value_hours, review.timeToComplete),
                 modifier = iconsModifier,
                 tint = contentColors
             )
-            Text(review.timeToComplete, color = contentColors, style = fontStyle)
+            HorizontalSpacer(MaterialTheme.dimens.paddings.xs)
+            Text(
+                stringResource(Res.string.value_hours, review.timeToComplete),
+                color = contentColors,
+                style = fontStyle
+            )
         }
         if (review.withCertificate) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    Icons.Share,
+                    Icons.Certificate,
                     contentDescription = stringResource(Res.string.certificate),
                     modifier = iconsModifier,
                     tint = contentColors
                 )
+                HorizontalSpacer(MaterialTheme.dimens.paddings.xs)
                 Text(
                     stringResource(Res.string.certificate),
                     color = contentColors,
-                    style = fontStyle
+                    style = fontStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -122,20 +143,20 @@ private fun Stars(starsCount: Double) {
                     color = MaterialTheme.colorScheme.tertiary
                 )
             } else {
-               Box(Modifier.width(IntrinsicSize.Max)) {
-                   Text(
-                       "★",
-                       style = MaterialTheme.typography.bodySmall
-                   )
-                   val fraction = 1 - ((it + 1 - starsCount)).toFloat().coerceIn(0f, 1f)
-                   Box(Modifier.fillMaxWidth(fraction).clipToBounds()) {
-                       Text(
-                           "★",
-                           style = MaterialTheme.typography.bodySmall,
-                           color = MaterialTheme.colorScheme.tertiary
-                       )
-                   }
-               }
+                Box(Modifier.width(IntrinsicSize.Max)) {
+                    Text(
+                        "★",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    val fraction = 1 - ((it + 1 - starsCount)).toFloat().coerceIn(0f, 1f)
+                    Box(Modifier.fillMaxWidth(fraction).clipToBounds()) {
+                        Text(
+                            "★",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
             }
         }
     }
@@ -150,9 +171,14 @@ private fun Prices(course: CourseVO) {
 
 @Composable
 private fun LikeButton(isLiked: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val icon = if (isLiked) {
+        Icons.FavoriteFilled
+    } else {
+        Icons.FavoriteOutlined
+    }
     IconButton(onClick = onClick, modifier = modifier) {
         Icon(
-            Icons.UpArrow,
+            icon,
             contentDescription = "like",
             modifier = Modifier.size(MaterialTheme.dimens.sizes.iconMedium)
         )
@@ -175,7 +201,7 @@ data class CourseReview(
     val votesCount: String,
     val learnersCount: String,
     val starsCount: Double,
-    val timeToComplete: String,
+    val timeToComplete: Int,
     val withCertificate: Boolean
 )
 
@@ -197,7 +223,7 @@ private fun CourseItemPreview() {
                     votesCount = "64",
                     learnersCount = "1.7К",
                     starsCount = 4.4,
-                    timeToComplete = "60 ч",
+                    timeToComplete = 60,
                     withCertificate = true
                 )
             ),

@@ -11,6 +11,6 @@ data class Course(
     val displayPrice: String,
     val displayDiscountPrice: String?,
     val learnersCount: Int,
-    val timeToComplete: Long,
+    val timeToCompleteSeconds: Long,
     val withCertificate: Boolean
 )

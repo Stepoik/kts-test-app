@@ -14,5 +14,7 @@ data class SearchCourseDto(
     @SerialName("score")
     val score: Double,
     @SerialName("course_owner")
-    val owner: Long
+    val owner: Long,
+    @SerialName("course")
+    val course: Long
 )

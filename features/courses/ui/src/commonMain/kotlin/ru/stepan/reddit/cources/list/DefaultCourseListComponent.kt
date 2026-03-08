@@ -29,9 +29,71 @@ class DefaultCourseListComponent(
     override fun onRefresh() {
         refreshJob?.cancel()
         loadNextJob?.cancel()
+        updateState { it.copy(isRefreshing = true, courses = emptyList()) }
+
+        refreshJob = componentScope.launch {
+            try {
+                getFullCoursesUseCase.execute {
+                    coursesLoader.getCourses(1)
+                }.onSuccess { newCourses ->
+                    updateState {
+                        it.copy(
+                            nextPage = newCourses.nextPage,
+                            courses = newCourses.courses.map { it.toVO() }
+                        )
+                    }
+                }.onFailure { throwable ->
+                    updateState {
+                        it.copy(
+                            error = throwable.toError(),
+                            courses = emptyList()
+                        )
+                    }
+                }
+            } finally {
+                updateState { it.copy(isRefreshing = false) }
+            }
+        }
+    }
+
+    override fun onLoadNext() {
+        val state = state.value
+        if (state.isLoading) return
+
+        val nextPage = state.nextPage ?: return
         updateState { it.copy(isLoading = true) }
 
-        componentScope.launch {
+        loadNextJob?.cancel()
+        loadNextJob = componentScope.launch {
+            try {
+                getFullCoursesUseCase.execute {
+                    coursesLoader.getCourses(nextPage)
+                }.onSuccess { newCourses ->
+                    updateState {
+                        it.copy(
+                            nextPage = newCourses.nextPage,
+                            courses = it.courses + newCourses.courses.map { it.toVO() }
+                        )
+                    }
+                }.onFailure { throwable ->
+                    updateState { it.copy(error = throwable.toError()) }
+                }
+            } finally {
+                updateState { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    override fun onSaveState(state: CourseListState): CourseListState {
+        return state.copy(isLoading = false, isRefreshing = false)
+    }
+
+    override fun loadInitial() {
+        updateState { it.copy(isLoading = true, courses = emptyList()) }
+
+        refreshJob?.cancel()
+        loadNextJob?.cancel()
+        loadNextJob = componentScope.launch {
             getFullCoursesUseCase.execute {
                 coursesLoader.getCourses(1)
             }.onSuccess { newCourses ->
@@ -43,46 +105,12 @@ class DefaultCourseListComponent(
                     )
                 }
             }.onFailure { throwable ->
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        error = throwable.toError(),
-                        courses = emptyList()
-                    )
-                }
-            }
-        }
-    }
-
-    override fun onLoadNext() {
-        if (state.value.isLoading) return
-
-        updateState { it.copy(isLoading = true) }
-        loadNextJob?.cancel()
-        loadNextJob = componentScope.launch {
-            val state = state.value
-            val nextPage = state.nextPage ?: return@launch
-            getFullCoursesUseCase.execute {
-                coursesLoader.getCourses(nextPage)
-            }.onSuccess { newCourses ->
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        nextPage = newCourses.nextPage,
-                        courses = it.courses + newCourses.courses.map { it.toVO() }
-                    )
-                }
-            }.onFailure { throwable ->
                 updateState { it.copy(isLoading = false, error = throwable.toError()) }
             }
         }
     }
 
-    override fun onSaveState(state: CourseListState): CourseListState {
-        return state.copy(isLoading = false)
-    }
-
-    class Factory: CourseListComponent.Factory, KoinComponent {
+    class Factory : CourseListComponent.Factory, KoinComponent {
         override fun create(
             componentContext: ComponentContext,
             coursesLoader: CoursesLoader

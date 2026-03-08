@@ -15,7 +15,7 @@ fun CourseDto.toDomain(): Course {
         displayPrice = displayPrice,
         displayDiscountPrice = displayPromoPrice,
         learnersCount = learnersCount,
-        timeToComplete = timeToComplete,
+        timeToCompleteSeconds = timeToComplete,
         withCertificate = withCertificate
     )
 }

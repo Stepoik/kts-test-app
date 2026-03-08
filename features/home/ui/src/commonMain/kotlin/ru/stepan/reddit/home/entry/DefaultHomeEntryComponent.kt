@@ -23,13 +23,15 @@ import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
 import ru.stepan.reddit.recommendations.entry.RecommendationsEntryComponent
-import ru.stepan.reddit.uikit.icons.DownArrow
+import ru.stepan.reddit.search.entry.SearchEntryComponent
+import ru.stepan.reddit.uikit.icons.Home
 import ru.stepan.reddit.uikit.icons.Icons
-import ru.stepan.reddit.uikit.icons.UpArrow
+import ru.stepan.reddit.uikit.icons.Search
 
 class DefaultHomeEntryComponent(
     componentContext: ComponentContext,
-    private val recommendationsComponentFactory: RecommendationsEntryComponent.Factory
+    private val recommendationsComponentFactory: RecommendationsEntryComponent.Factory,
+    private val searchComponentFactory: SearchEntryComponent.Factory
 ) : HomeEntryComponent(componentContext) {
     private val navigation = StackNavigation<Config>()
     private val stack = childStack(
@@ -48,7 +50,11 @@ class DefaultHomeEntryComponent(
                 )
             )
 
-            is Config.Search -> Child.Search(recommendationsComponentFactory.create(componentContext))
+            is Config.Search -> Child.Search(
+                searchComponentFactory.create(
+                    componentContext
+                )
+            )
         }
     }
 
@@ -86,7 +92,7 @@ class DefaultHomeEntryComponent(
 
     sealed class Child {
         class Recommendations(val component: RecommendationsEntryComponent) : Child()
-        class Search(val component: RecommendationsEntryComponent) : Child()
+        class Search(val component: SearchEntryComponent) : Child()
     }
 
     class Factory : HomeEntryComponent.Factory, KoinComponent {
@@ -112,12 +118,12 @@ private fun BottomNavigation(
     val items = remember(activeChild) {
         listOf(
             NavigationItem(
-                Icons.UpArrow,
+                Icons.Home,
                 onNavigateRecommendations,
                 activeChild is DefaultHomeEntryComponent.Child.Recommendations
             ),
             NavigationItem(
-                Icons.DownArrow,
+                Icons.Search,
                 onNavigateSearch,
                 activeChild is DefaultHomeEntryComponent.Child.Search
             )

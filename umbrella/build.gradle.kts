@@ -16,7 +16,11 @@ kotlin {
             implementation(projects.features.courses.ui)
             implementation(projects.features.courses.data)
 
+            implementation(projects.features.courseDetails.ui)
+
             implementation(projects.features.recommendations.ui)
+
+            implementation(projects.features.search.ui)
 
             implementation(projects.features.splash.ui)
 

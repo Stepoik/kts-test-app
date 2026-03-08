@@ -4,7 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import ru.stepan.reddit.core.ui.decompose.ScreenComponent
 import ru.stepan.reddit.cources.list.CourseUIInteraction
 
-interface RecommendationsComponent : ScreenComponent<RecommendationsState, Unit>, CourseUIInteraction {
+interface RecommendationsComponent : ScreenComponent<RecommendationsComponentState, Unit>, CourseUIInteraction {
     interface Factory {
         fun create(componentContext: ComponentContext): RecommendationsComponent
     }

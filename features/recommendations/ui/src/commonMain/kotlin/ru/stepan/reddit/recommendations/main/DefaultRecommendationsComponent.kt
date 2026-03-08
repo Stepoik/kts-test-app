@@ -13,10 +13,10 @@ class DefaultRecommendationsComponent(
     componentContext: ComponentContext,
     courseListComponentFactory: CourseListComponent.Factory,
     private val coursesRepository: CoursesRepository
-) : RecommendationsComponent, BaseScreenComponent<RecommendationsState, Unit>(
+) : RecommendationsComponent, BaseScreenComponent<RecommendationsComponentState, Unit>(
     componentContext,
-    RecommendationsState(),
-    RecommendationsState.serializer()
+    RecommendationsComponentState(),
+    RecommendationsComponentState.serializer()
 ) {
     private val courseListComponent =
         courseListComponentFactory.create(childContext("course_list")) {
@@ -24,14 +24,15 @@ class DefaultRecommendationsComponent(
         }
 
     init {
-        courseListComponent.onRefresh()
+        courseListComponent.loadInitial()
         componentScope.launch {
             courseListComponent.state.collect { state ->
                 updateState {
                     it.copy(
                         isLoading = state.isLoading,
                         courses = state.courses,
-                        error = state.error
+                        error = state.error,
+                        isRefreshing = state.isRefreshing
                     )
                 }
             }

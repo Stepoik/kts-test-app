@@ -7,6 +7,7 @@ import ru.stepan.reddit.cources.composables.CourseVO
 @Serializable
 data class CourseListState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     @Transient
     val courses: List<CourseVO> = listOf(),
     val error: CourseListError? = null,
