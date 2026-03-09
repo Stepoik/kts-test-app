@@ -23,6 +23,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import dev.lokksmith.client.request.flow.AuthFlowUserAgentResponseHandler
+import dev.lokksmith.compose.AuthFlowLauncher
+import dev.lokksmith.compose.rememberAuthFlowLauncher
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,62 +46,31 @@ import testapp.features.auth.ui.generated.resources.unknown_error
 @Composable
 internal fun LoginScreen(component: LoginComponent) {
     val state = component.state.collectAsState().value
-
+    val authLauncher = rememberAuthFlowLauncher()
     LaunchedEffect(Unit) {
         component.events.collect { event ->
             when (event) {
-                is LoginScreenEvent.Authorized -> component.onAuthorized() // По факту вообще не нужно, сделал чисто чтоб как в дз было
+                is LoginScreenEvent.AuthFlowInitiation -> {
+                    authLauncher.launch(
+                        initiation = event.initiation
+                    )
+                }
             }
         }
     }
-
-    val focusRequester = remember { FocusRequester() }
 
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = MaterialTheme.dimens.md),
+                .padding(horizontal = MaterialTheme.dimens.paddings.md),
             verticalArrangement = Arrangement.spacedBy(
-                MaterialTheme.dimens.md,
+                MaterialTheme.dimens.paddings.md,
                 alignment = Alignment.CenterVertically
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(Res.string.sign_in),
-                style = MaterialTheme.typography.titleMedium
-            )
-            RedditOutlinedTextField(
-                value = state.username,
-                onValueChange = component::onUsernameChanged,
-                placeholder = stringResource(Res.string.login),
-                keyboardActions = KeyboardActions(onNext = { focusRequester.requestFocus() }),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-            RedditOutlinedTextField(
-                value = state.password,
-                onValueChange = component::onPasswordChanged,
-                placeholder = stringResource(Res.string.password),
-                keyboardActions = KeyboardActions(onDone = { component.onButtonClicked() }),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
-            )
-            if (state.error != null) {
-                Text(
-                    state.error.toText(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
             Button(
                 onClick = component::onButtonClicked,
                 enabled = state.isButtonEnabled,
@@ -110,16 +82,6 @@ internal fun LoginScreen(component: LoginComponent) {
     }
 }
 
-@Composable
-private fun LoginScreenError.toText(): String {
-    val res = when (this) {
-        LoginScreenError.INCORRECT_CREDENTIALS -> Res.string.incorrect_credential
-        LoginScreenError.NETWORK -> Res.string.network_error
-        LoginScreenError.UNKNOWN -> Res.string.unknown_error
-    }
-    return stringResource(res)
-}
-
 @Preview
 @Composable
 private fun LoginScreenPreview() {
@@ -128,8 +90,6 @@ private fun LoginScreenPreview() {
         override val events: SharedFlow<LoginScreenEvent> = MutableSharedFlow()
         override val state: StateFlow<LoginScreenState> = MutableStateFlow(LoginScreenState())
         override fun onButtonClicked() {}
-        override fun onPasswordChanged(password: SerializableTextFieldValue) {}
-        override fun onUsernameChanged(username: SerializableTextFieldValue) {}
     }
     RedditTheme {
         LoginScreen(component)

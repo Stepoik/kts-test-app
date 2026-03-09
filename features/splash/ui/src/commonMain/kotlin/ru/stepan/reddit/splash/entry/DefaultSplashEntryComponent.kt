@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
-import ru.stepan.reddit.auth.api.AccountRepository
+import ru.stepan.reddit.core.data.network.StepikOAuthClientFactory
 import testapp.features.splash.ui.generated.resources.Res
 import testapp.features.splash.ui.generated.resources.reddit
 
@@ -22,21 +22,17 @@ class DefaultSplashEntryComponent(
     componentContext: ComponentContext,
     private val onNavigateHome: () -> Unit,
     private val onNavigateAuth: () -> Unit,
-    private val accountRepository: AccountRepository
+    private val stepikOAuthClientFactory: StepikOAuthClientFactory,
 ) : SplashEntryComponent(componentContext) {
 
     init {
         componentScope.launch {
-            accountRepository.getMe()
-                .onSuccess {
-                    onNavigateHome()
-                }.onFailure {
-                    if (accountRepository.activeAccount.first() == null) {
-                        onNavigateAuth()
-                    } else {
-                        onNavigateHome()
-                    }
-                }
+            val tokens = stepikOAuthClientFactory.getOrCreate().tokens.value
+            if (tokens == null) {
+                onNavigateAuth()
+            } else {
+                onNavigateHome()
+            }
         }
     }
 

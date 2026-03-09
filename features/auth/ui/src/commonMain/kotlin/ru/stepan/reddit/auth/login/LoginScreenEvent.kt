@@ -1,5 +1,7 @@
 package ru.stepan.reddit.auth.login
 
-sealed class LoginScreenEvent {
-    class Authorized : LoginScreenEvent()
+import dev.lokksmith.client.request.flow.AuthFlow
+
+sealed interface LoginScreenEvent {
+    data class AuthFlowInitiation(val initiation: AuthFlow.Initiation) : LoginScreenEvent
 }

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.first
+import ru.stepan.reddit.core.common.result.coroutinesRunCatching
 import ru.stepan.reddit.onboarding.api.models.OnboardingStatus
 import ru.stepan.reddit.onboarding.api.models.OnboardingType
 
@@ -12,7 +13,7 @@ class OnboardingRepositoryImpl(
     private val dataStore: DataStore<Preferences>
 ) : OnboardingRepository {
     override suspend fun getOnboardingStatus(onboarding: OnboardingType): Result<OnboardingStatus> {
-        return runCatching {
+        return coroutinesRunCatching {
             dataStore.data.first()[onboarding.toKey()]?.asStatus()!!
         }
     }
@@ -21,7 +22,7 @@ class OnboardingRepositoryImpl(
         onboarding: OnboardingType,
         status: OnboardingStatus
     ): Result<Unit> {
-        return runCatching {
+        return coroutinesRunCatching {
             dataStore.edit {
                 it[onboarding.toKey()] = status.toBoolean()
             }

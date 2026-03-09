@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
-import ru.stepan.reddit.auth.api.AccountRepository
 import ru.stepan.reddit.auth.entry.AuthEntryComponent
+import ru.stepan.reddit.core.data.network.StepikOAuthClientFactory
 import ru.stepan.reddit.home.entry.HomeEntryComponent
 import ru.stepan.reddit.onboarding.api.OnboardingRepository
 import ru.stepan.reddit.onboarding.api.models.OnboardingStatus
@@ -27,7 +27,7 @@ class DefaultRootEntryComponent(
     private val onboardingComponentFactory: OnboardingEntryComponent.Factory,
     private val homeComponentFactory: HomeEntryComponent.Factory,
     private val onboardingRepository: OnboardingRepository,
-    private val accountRepository: AccountRepository
+    private val stepikOAuthClientFactory: StepikOAuthClientFactory
 ) : RootEntryComponent(
     componentContext = componentContext
 ) {
@@ -41,7 +41,7 @@ class DefaultRootEntryComponent(
 
     init {
         componentScope.launch {
-            accountRepository.activeAccount.collect {
+            stepikOAuthClientFactory.getOrCreate().tokens.collect {
                 if (it == null && stack.active.instance is Child.Home) {
                     navigation.replaceAll(Config.Auth())
                 }
