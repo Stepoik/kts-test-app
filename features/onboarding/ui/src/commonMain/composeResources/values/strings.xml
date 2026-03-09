@@ -1,0 +1,12 @@
+<resources>
+    <string name="next">Далее</string>
+    <string name="start">Начать</string>
+    <string name="what_is_reddit_title">Что такое Reddit?</string>
+    <string name="what_is_reddit_text">Reddit — это платформа с тысячами сообществ по интересам. Люди делятся постами, обсуждают идеи и голосуют за лучший контент.</string>
+
+    <string name="what_can_you_do_title">Что можно делать?</string>
+    <string name="what_can_you_do_text">Подписывайся на сабреддиты, публикуй посты, участвуй в обсуждениях и сохраняй интересные материалы.</string>
+
+    <string name="client_capabilities_title">Возможности клиента</string>
+    <string name="client_capabilities_text">Быстрая лента, удобная навигация, тёмная тема и полный контроль над тем, как ты читаешь Reddit.</string>
+</resources>
