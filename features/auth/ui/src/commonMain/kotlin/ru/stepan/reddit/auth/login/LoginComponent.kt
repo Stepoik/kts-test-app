@@ -7,10 +7,6 @@ import ru.stepan.reddit.core.ui.decompose.ScreenComponent
 internal interface LoginComponent : ScreenComponent<LoginScreenState, LoginScreenEvent> {
     val onAuthorized: () -> Unit
 
-    fun onUsernameChanged(username: SerializableTextFieldValue)
-
-    fun onPasswordChanged(password: SerializableTextFieldValue)
-
     fun onButtonClicked()
 
     interface Factory {

@@ -1,55 +1,65 @@
 package ru.stepan.reddit.auth.login
 
 import com.arkivanov.decompose.ComponentContext
+import dev.lokksmith.client.request.flow.AuthFlow
+import dev.lokksmith.client.request.flow.AuthFlowResultProvider
+import dev.lokksmith.client.request.flow.authFlowResult
+import dev.lokksmith.client.request.flow.authorizationCode.AuthorizationCodeFlow
+import dev.lokksmith.client.request.parameter.Scope
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
-import ru.stepan.reddit.auth.api.AccountRepository
-import ru.stepan.reddit.auth.api.errors.IncorrectCredentialsError
-import ru.stepan.reddit.auth.api.models.AuthCredentials
-import ru.stepan.reddit.core.api.NetworkError
-import ru.stepan.reddit.core.ui.compose.SerializableTextFieldValue
-import ru.stepan.reddit.core.ui.compose.text
+import ru.stepan.reddit.core.data.network.StepikOAuthClientFactory
 import ru.stepan.reddit.core.ui.decompose.BaseScreenComponent
 
 internal class DefaultLoginComponent(
     componentContext: ComponentContext,
     override val onAuthorized: () -> Unit,
-    private val accountRepository: AccountRepository
+    private val stepikOAuthClientFactory: StepikOAuthClientFactory
 ) : BaseScreenComponent<LoginScreenState, LoginScreenEvent>(
     componentContext = componentContext,
     initialState = LoginScreenState(),
     serializer = LoginScreenState.serializer()
 ), LoginComponent {
-
-    override fun onUsernameChanged(username: SerializableTextFieldValue) {
-        updateState { it.copy(username = username) }
-    }
-
-    override fun onPasswordChanged(password: SerializableTextFieldValue) {
-        updateState { it.copy(password = password) }
+    init {
+        componentScope.launch {
+            stepikOAuthClientFactory.getOrCreate().authFlowResult.collect(::onResult)
+        }
     }
 
     override fun onButtonClicked() {
-        if (state.value.isLoading) return
+        if (state.value.status != LoginStatus.WAITING_FOR_LOGIN) return
 
-        updateState { it.copy(isLoading = true) }
+        updateState { it.copy(status = LoginStatus.LOGGING) }
         componentScope.launch {
-            val state = state.value
-            if (!state.isValid()) {
-                updateState { it.copy(isLoading = false) }
-                return@launch
+            val initiation = getAuthInitiation()
+            sendEvent(LoginScreenEvent.AuthFlowInitiation(initiation))
+        }
+    }
+
+    private fun onResult(result: AuthFlowResultProvider.Result) {
+        when (result) {
+            is AuthFlowResultProvider.Result.Success -> {
+                onAuthorized()
+                updateState { it.copy(status = LoginStatus.WAITING_FOR_LOGIN) }
             }
 
-            val credentials = state.asCredentials()
-            accountRepository.login(credentials)
-                .onSuccess {
-                    sendEvent(LoginScreenEvent.Authorized())
-                    updateState { it.copy(isLoading = false) }
-                }.onFailure { error ->
-                    updateState { it.copy(error = error.toScreenError(), isLoading = false) }
-                }
+            is AuthFlowResultProvider.Result.Error -> {
+                updateState { it.copy(status = LoginStatus.WAITING_FOR_LOGIN) }
+            }
+
+            else -> {}
         }
+    }
+
+    private suspend fun getAuthInitiation(): AuthFlow.Initiation {
+        val request = AuthorizationCodeFlow.Request(
+            redirectUri = StepikOAuthClientFactory.REDIRECT_URL,
+            scope = setOf(Scope.Write, Scope.Read)
+        )
+        return stepikOAuthClientFactory.getOrCreate()
+            .authorizationCodeFlow(request = request)
+            .prepare()
     }
 
 
@@ -61,23 +71,4 @@ internal class DefaultLoginComponent(
             return getKoin().get { parametersOf(componentContext, onAuthorized) }
         }
     }
-}
-
-private fun Throwable.toScreenError(): LoginScreenError {
-    return when (this) {
-        is IncorrectCredentialsError -> LoginScreenError.INCORRECT_CREDENTIALS
-        is NetworkError -> LoginScreenError.NETWORK
-        else -> LoginScreenError.UNKNOWN
-    }
-}
-
-private fun LoginScreenState.asCredentials(): AuthCredentials {
-    return AuthCredentials(
-        username = username.text,
-        password = password.text
-    )
-}
-
-private fun LoginScreenState.isValid(): Boolean {
-    return username.text.isNotEmpty() && password.text.isNotEmpty()
 }

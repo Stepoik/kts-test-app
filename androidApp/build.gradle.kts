@@ -13,6 +13,10 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        addManifestPlaceholders(
+            mapOf("lokksmithRedirectScheme" to "stepapp")
+        )
     }
     packaging {
         resources {
@@ -42,6 +46,7 @@ dependencies {
     implementation(libs.decompose.core)
     implementation(libs.compose.components.resources)
 
+    implementation(projects.libs.lokksmithCore)
     implementation(projects.features.root.entry)
     implementation(projects.umbrella)
     implementation(projects.composeApp)

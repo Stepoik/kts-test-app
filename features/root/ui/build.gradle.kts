@@ -12,7 +12,8 @@ kotlin {
             implementation(projects.features.home.entry)
 
             implementation(projects.features.onboarding.api)
-            implementation(projects.features.auth.api)
+
+            implementation(projects.core.data)
 
             implementation(libs.koin.core)
         }

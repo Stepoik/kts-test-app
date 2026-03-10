@@ -6,7 +6,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.features.home.entry)
-            implementation(projects.features.feed.entry)
+            implementation(projects.features.recommendations.entry)
+            implementation(projects.features.search.entry)
+            implementation(projects.features.courseDetails.entry)
             implementation(projects.core.ui.compose)
             implementation(projects.uikit)
 

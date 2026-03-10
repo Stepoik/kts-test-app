@@ -52,8 +52,8 @@ fun AppOnboardingScreen(component: AppOnboardingComponent) {
         Column(
             Modifier.fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = MaterialTheme.dimens.md)
-                .padding(bottom = MaterialTheme.dimens.xl)
+                .padding(horizontal = MaterialTheme.dimens.paddings.md)
+                .padding(bottom = MaterialTheme.dimens.paddings.xl)
         ) {
             HorizontalPager(pagerState, userScrollEnabled = false) { page ->
                 when (page) {
@@ -93,7 +93,7 @@ private fun FirstPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                MaterialTheme.dimens.sm,
+                MaterialTheme.dimens.paddings.sm,
                 alignment = Alignment.CenterVertically
             )
         ) {
@@ -127,7 +127,7 @@ private fun SecondPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                space = MaterialTheme.dimens.sm,
+                space = MaterialTheme.dimens.paddings.sm,
                 alignment = Alignment.CenterVertically
             )
         ) {
@@ -161,7 +161,7 @@ private fun ThirdPage(onNext: () -> Unit, modifier: Modifier = Modifier) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                space = MaterialTheme.dimens.sm,
+                space = MaterialTheme.dimens.paddings.sm,
                 alignment = Alignment.CenterVertically
             )
         ) {

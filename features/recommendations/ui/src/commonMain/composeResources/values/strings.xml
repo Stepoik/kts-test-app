@@ -1,0 +1,4 @@
+<resources>
+    <string name="reload">Перезагрузить</string>
+    <string name="no_recommendations">Нет рекоммендаций</string>
+</resources>
