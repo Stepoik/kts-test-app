@@ -5,6 +5,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.features.profile.entry)
+
             implementation(projects.core.ui.compose)
             implementation(projects.core.ui.decompose)
             implementation(projects.uikit)
