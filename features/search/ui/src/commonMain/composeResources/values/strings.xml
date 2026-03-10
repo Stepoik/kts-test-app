@@ -1,0 +1,5 @@
+<resources>
+    <string name="reload">Перезагрузить</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="search">Поиск</string>
+</resources>

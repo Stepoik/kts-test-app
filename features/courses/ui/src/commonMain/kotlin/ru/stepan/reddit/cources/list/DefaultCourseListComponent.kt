@@ -60,7 +60,7 @@ class DefaultCourseListComponent(
         val state = state.value
         if (state.isLoading) return
 
-        val nextPage = state.nextPage ?: return
+        val nextPage = state.nextPage ?: 1
         updateState { it.copy(isLoading = true) }
 
         loadNextJob?.cancel()
